@@ -1,8 +1,14 @@
-# IP Certificate ACME
+# vps-tools
 
-一个面向 Debian/Ubuntu 的交互式 Bash 工具，使用
-[acme.sh](https://github.com/acmesh-official/acme.sh) 为公网 IPv4 申请
-Let’s Encrypt 短期 IP 证书，并配置自动续期。
+Debian/Ubuntu 服务器工具集（root 运行），包含两个独立交互式 Bash 脚本：
+
+| 工具 | 用途 |
+|---|---|
+| **ip-cert-acme.sh** | 使用 [acme.sh](https://github.com/acmesh-official/acme.sh) 为公网 IPv4 申请 Let's Encrypt 短期 IP 证书，并配置自动续期 |
+| **ip-bootstrap.sh** | 新机器开荒：软件更新、SSH 加固、防火墙、fail2ban、时区与时间同步、swap/BBR、数据盘、环境体检、一键全流程 |
+
+以下为证书工具 `ip-cert-acme.sh` 的文档；开荒脚本见文末
+[机器开荒脚本（ip-bootstrap.sh）](#机器开荒脚本ip-bootstrap.sh)。
 
 > Let’s Encrypt 的 IP 证书有效期约 6 天。稳定的自动续期不是可选项：公网
 > TCP 80、cron、固定证书路径和服务重载命令必须同时正常。
@@ -49,7 +55,7 @@ standalone 自动续期方案；应先设计 webroot、反向代理或可靠的 
 先下载并查看脚本：
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/eutopiazen/ip-cert-acme/main/ip-cert-acme.sh
+curl -fsSLO https://raw.githubusercontent.com/eutopiazen/vps-tools/main/ip-cert-acme.sh
 less ip-cert-acme.sh
 chmod +x ip-cert-acme.sh
 ./ip-cert-acme.sh
@@ -58,7 +64,7 @@ chmod +x ip-cert-acme.sh
 确认信任仓库内容后，也可以一行运行：
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/eutopiazen/ip-cert-acme/main/ip-cert-acme.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/eutopiazen/vps-tools/main/ip-cert-acme.sh)
 ```
 
 不要使用 `curl ... | bash`，因为管道会占用标准输入，交互菜单无法正常读取。
@@ -221,13 +227,13 @@ Bash 工具，把一台裸机推到安全基线。风格与 `ip-cert-acme.sh` �
 ### 推荐运行方式
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/eutopiazen/ip-cert-acme/main/ip-bootstrap.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/eutopiazen/vps-tools/main/ip-bootstrap.sh)
 ```
 
 建议先下载审阅后再运行：
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/eutopiazen/ip-cert-acme/main/ip-bootstrap.sh
+curl -fsSLO https://raw.githubusercontent.com/eutopiazen/vps-tools/main/ip-bootstrap.sh
 less ip-bootstrap.sh
 bash ip-bootstrap.sh
 ```
