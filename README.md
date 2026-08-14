@@ -212,6 +212,49 @@ openssl x509 -in /etc/ssl/ip-cert/fullchain.pem -noout -dates -ext subjectAltNam
 执行用户确认的部署及重载命令。目标旧证书备份保存在
 `/var/lib/ip-cert-acme/backups/`。运行前请审阅源码。
 
+## 机器开荒脚本（ip-bootstrap.sh）
+
+同一仓库内的另一个独立工具：新机器开荒脚本，面向 Debian/Ubuntu 的交互式
+Bash 工具，把一台裸机推到安全基线。风格与 `ip-cert-acme.sh` 一致：函数化、
+幂等可重跑、危险操作自带安全网（备份 → 变更 → 校验 → 失败回滚）。
+
+### 推荐运行方式
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/eutopiazen/ip-cert-acme/main/ip-bootstrap.sh)
+```
+
+建议先下载审阅后再运行：
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/eutopiazen/ip-cert-acme/main/ip-bootstrap.sh
+less ip-bootstrap.sh
+bash ip-bootstrap.sh
+```
+
+### 菜单功能
+
+```text
+ 1) 系统基础：更新软件 / 工具 / 主机名      8) 系统优化：swap / BBR / 自动更新 / 日志限额
+ 2) 时区与时间同步                          9) 挂载数据盘
+ 3) 粘贴公钥到 root（SSH 加固的前提）      10) 环境体检报告
+ 4) 防火墙安装与放行端口                   11) 一键全流程开荒（安全顺序）
+ 5) 修改 SSH 端口（安全网保护）          ----------------------------------------
+ 6) 安装 fail2ban（自动匹配 SSH 端口）     12) NodeQuality 节点质量测试（第三方脚本）
+ 7) SSH 加固：root 仅密钥 / 禁止密码登录   13) TcpQuality TCP 质量测试（第三方脚本）
+ 0) 退出
+```
+
+### 安全设计要点
+
+- 一键全流程按安全顺序编排：先种公钥 → 防火墙放行 → 改 SSH 端口 → 人工验证
+  新端口 → 才允许禁密码登录；root 无公钥时加固会被拒绝执行。
+- 改 SSH 端口内置安全网：防火墙启用中强制先放行新端口，`sshd -t` 校验失败或
+  端口未监听自动回滚备份。
+- fail2ban 的 sshd jail 自动跟随当前 SSH 端口，白名单含当前连接 IP。
+- 菜单 12/13 为第三方远端脚本（`curl|bash`），以 root 执行存在供应链风险，
+  执行前展示来源并要求输入 `YES` 二次确认，脚本不承担其内容责任。
+
 ## License
 
 [MIT](LICENSE)
